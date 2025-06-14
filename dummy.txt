@@ -1,0 +1,129 @@
+import React, { useState, useEffect } from 'react';
+import AWCTable from './AWCTable';
+//setAwcList() ke andar fetch() lagana hai.
+const mockAWCData = [
+    { name: "Kishanpura Center", status: "Active", lastLog: "2025-06-11", state: "Uttar Pradesh", district: "Jhansi", cluster: "Cluster A" },
+    { name: "Rajgarh AWC", status: "No Logs", lastLog: null, state: "Madhya Pradesh", district: "Lalitpur", cluster: "Cluster B" },
+];
+
+const Dashboardmain = () => {
+    const [filters, setFilters] = useState({
+        state: '',
+        district: '',
+        cluster: '',
+    });
+
+    const [awcList, setAwcList] = useState([]);
+
+    useEffect(() => {
+        // Mock data; replace with fetch API later
+        setAwcList(mockAWCData);
+    }, []);
+
+    const handleFilterChange = (type, value) => {
+        setFilters((prev) => ({ ...prev, [type]: value }));
+    };
+
+    // 🔍 Filter logic
+    const filteredAWCs = awcList.filter((awc) =>
+        (filters.state ? awc.state === filters.state : true) &&
+        (filters.district ? awc.district === filters.district : true) &&
+        (filters.cluster ? awc.cluster === filters.cluster : true)
+    );
+
+    return (
+        <div className="bg-gray-100 min-h-screen p-6 flex justify-center">
+            <div className="bg-white shadow-lg rounded-xl p-8 w-full max-w-7xl">
+
+                {/* Header */}
+                {/* Header with Search */}
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
+                    <h2 className="text-2xl font-bold text-[#701a75]">Dashboard Overview</h2>
+                    <input
+                        type="text"
+                        placeholder="Search by AWC Code"
+                        value={filters.awcCode || ''}
+                        onChange={(e) => handleFilterChange("awcCode", e.target.value)}
+                        className="border p-2 rounded-md w-full md:w-64"
+                    />
+                </div>
+
+                {/* Summary Cards */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div className="bg-purple-100 border-l-4 border-[#701a75] p-4 rounded-md shadow">
+                        <h3 className="text-lg font-semibold text-[#4a044e]">Total Projectors Deployed</h3>
+                        <p className="text-2xl font-bold text-[#4a044e]">320</p>
+                    </div>
+                    <div className="bg-green-100 border-l-4 border-green-600 p-4 rounded-md shadow">
+                        <h3 className="text-lg font-semibold text-green-800">Reporting Projectors</h3>
+                        <p className="text-2xl font-bold text-green-800">276</p>
+                    </div>
+                    <div className="bg-red-100 border-l-4 border-red-600 p-4 rounded-md shadow">
+                        <h3 className="text-lg font-semibold text-red-800">Not Reporting</h3>
+                        <p className="text-2xl font-bold text-red-800">44</p>
+                    </div>
+                </div>
+
+
+                {/* Filters */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                    <select className="border p-2 rounded-md" value={filters.state} onChange={(e) => handleFilterChange('state', e.target.value)}>
+                        <option value="">Select State</option>
+                        <option>Uttar Pradesh</option>
+                        <option>Madhya Pradesh</option>
+                    </select>
+
+                    <select className="border p-2 rounded-md" value={filters.district} onChange={(e) => handleFilterChange('district', e.target.value)}>
+                        <option value="">Select District</option>
+                        <option>Jhansi</option>
+                        <option>Lalitpur</option>
+                    </select>
+
+                    <select className="border p-2 rounded-md" value={filters.cluster} onChange={(e) => handleFilterChange('cluster', e.target.value)}>
+                        <option value="">Select Cluster</option>
+                        <option>Cluster A</option>
+                        <option>Cluster B</option>
+                    </select>
+                </div>
+
+                {/* AWC Table */}
+                {/* <div className="overflow-x-auto">
+                    <table className="min-w-full bg-white border rounded-md">
+                        <thead>
+                            <tr className="bg-[#f9f5f7] text-[#4a044e] text-left">
+                                <th className="py-2 px-4 border-b">AWC Name</th>
+                                <th className="py-2 px-4 border-b">Status</th>
+                                <th className="py-2 px-4 border-b">Last Log Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {filteredAWCs.map((awc, idx) => (
+                                <tr key={idx}>
+                                    <td className="py-2 px-4 border-b">{awc.name}</td>
+                                    <td className={`py-2 px-4 border-b font-semibold ${awc.status === 'Active' ? 'text-green-700' : 'text-red-600'}`}>
+                                        {awc.status}
+                                    </td>
+                                    <td className="py-2 px-4 border-b">{awc.lastLog || '—'}</td>
+                                </tr>
+                            ))}
+                            {filteredAWCs.length === 0 && (
+                                <tr>
+                                    <td colSpan="3" className="py-4 px-4 text-center text-gray-500">No data found for selected filters.</td>
+                                </tr>
+                            )}
+                        </tbody>
+                    </table>
+                </div> */}
+                <AWCTable data={filteredAWCs} />
+
+
+                {/* Last updated info */}
+                <div className="text-sm text-right text-gray-500 mt-4">
+                    Last updated: 12 June 2025, 10:15 AM
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export default Dashboardmain;
