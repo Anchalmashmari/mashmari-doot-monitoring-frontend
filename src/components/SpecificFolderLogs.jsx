@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import AWCFilter from './AWCFilter';
 import AWCSearch from './AWCSearch';
 import { FaFolder, FaFolderOpen } from 'react-icons/fa';
+import Loader from './Loader';
 
 const SpecificFolderLogs = () => {
   
@@ -71,7 +72,8 @@ const SpecificFolderLogs = () => {
     }
   };
 
-  if (loading) return <div className="p-6 text-lg">Loading...</div>;
+  if (loading) return <Loader />;
+ 
   if (error) return <div className="p-6 text-red-600 text-lg">{error}</div>;
 
   return (

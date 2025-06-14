@@ -2,21 +2,18 @@ import React, { useState } from 'react';
 import FolderProject from './FolderProject';
 import Projectlog from './Projectlog';
 import Settings from './Settings';
-import Dashboard from './Dashboard';
 import { useNavigate } from 'react-router-dom';
 
 const ProjectFolder = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('folderproject');
-  const [reportDropdownOpen, setReportDropdownOpen] = useState(false); // 👈 Reports dropdown control
+  const [reportDropdownOpen, setReportDropdownOpen] = useState(false);
   const navigate = useNavigate();
 
   const renderContent = () => {
     switch (activeTab) {
       case 'folderproject':
         return <FolderProject />;
-      case 'dashboard':
-        return <Dashboard />;
       case 'logs':
         return <Projectlog />;
       case 'settings':
@@ -27,14 +24,14 @@ const ProjectFolder = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#f7f7f7] flex flex-col md:flex-row">
+   <div className="min-h-screen flex flex-col md:flex-row">
 
-      {/* Sidebar */}
-      <div className="hidden md:flex flex-col w-64 bg-white text-gray-800 shadow-md">
+      {/* Sidebar - Fixed */}
+      <div className="hidden md:flex flex-col w-64 bg-white text-gray-800 shadow-md fixed h-screen">
         <div className="flex items-center justify-center h-16 border-b">
           <span className="text-2xl font-extrabold text-[#701a75]">MASHMARI</span>
         </div>
-        <nav className="flex-1 p-4 space-y-2">
+        <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
 
           <button
             onClick={() => setActiveTab('folderproject')}
@@ -42,13 +39,13 @@ const ProjectFolder = () => {
           >
             Project
           </button>
+
           <button
             onClick={() => navigate('/dashboard')}
             className="block text-left font-medium w-full px-4 py-2 hover:text-[#4a044e]"
           >
             Dashboard
           </button>
-
 
           {/* Reports Dropdown */}
           <div>
@@ -75,8 +72,6 @@ const ProjectFolder = () => {
                 >
                   Projector Logs
                 </button>
-                {/* Aap yaha aur bhi reports future me add kar sakte ho */}
-                {/* <button className="block text-left w-full px-4 py-2 text-sm hover:text-[#4a044e]">Another Report</button> */}
               </div>
             )}
           </div>
@@ -90,7 +85,7 @@ const ProjectFolder = () => {
         </nav>
       </div>
 
-      {/* Mobile Navbar - unchanged (you can later add dropdown here too if needed) */}
+      {/* Mobile Navbar */}
       <div className="md:hidden bg-white text-gray-800 w-full shadow-md">
         <div className="flex items-center justify-between px-4 py-3 border-b">
           <div className="text-xl font-bold text-[#701a75]">Mashmari</div>
@@ -109,15 +104,20 @@ const ProjectFolder = () => {
 
         {menuOpen && (
           <div className="bg-gray-100 border-t">
+            <button
+              onClick={() => { setActiveTab('folderproject'); setMenuOpen(false); }}
+              className="block w-full text-left px-4 py-2 hover:text-[#4a044e]"
+            >
+              Project
+            </button>
 
             <button
-              onClick={() => { setActiveTab('dashboard'); setMenuOpen(false); }}
+              onClick={() => { navigate('/dashboard'); setMenuOpen(false); }}
               className="block w-full text-left px-4 py-2 hover:text-[#4a044e]"
             >
               Dashboard
             </button>
 
-            {/* Reports Dropdown in Mobile */}
             <div>
               <button
                 onClick={() => setReportDropdownOpen(!reportDropdownOpen)}
@@ -154,21 +154,23 @@ const ProjectFolder = () => {
             </button>
           </div>
         )}
-
       </div>
 
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col">
-        <div className="bg-gradient-to-r from-[#4a044e] to-[#7b1fa2] p-6 text-white">
-          <h1 className="text-2xl font-bold">Mashmari Doot Monitoring Dashboard</h1>
-        </div>
+      {/* Main Content Area */}
+     <div className="md:ml-64 flex-1 flex flex-col min-h-screen">
+  {/* Topbar */}
+  <div className="bg-gradient-to-r from-[#4a044e] to-[#7b1fa2] p-6 text-white sticky top-0 z-10">
+    <h1 className="text-2xl font-bold">Mashmari Doot Monitoring Dashboard</h1>
+  </div>
 
-        <div className="bg-[#f7f7f7] p-6 flex-1">
-          {renderContent()}
-        </div>
-      </div>
+  {/* Scrollable Content */}
+  <div className="flex-1 overflow-y-auto p-6 bg-[#f7f7f7]">
+    {renderContent()}
+  </div>
+</div>
+
     </div>
   );
 };
 
-export default ProjectFolder
+export default ProjectFolder;
