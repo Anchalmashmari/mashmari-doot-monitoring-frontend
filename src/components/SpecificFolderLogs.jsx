@@ -2,10 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import AWCFilter from './AWCFilter';
 import AWCSearch from './AWCSearch';
+import { FaFolder, FaFolderOpen } from 'react-icons/fa';
 
 const SpecificFolderLogs = () => {
+  
   const { code } = useParams();
   const navigate = useNavigate();
+  const [openFolderCode, setOpenFolderCode] = useState(null);
 
   const [folders, setFolders] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -111,32 +114,67 @@ const SpecificFolderLogs = () => {
             </tr>
           </thead>
           <tbody>
-            {paginatedFolders.map((folder, idx) => (
-              <tr key={idx} className="hover:bg-gray-50 text-sm">
-                <td className="py-2 px-4 border-b">{folder.code}</td>
-                <td className="py-2 px-4 border-b">{folder.fileCount}</td>
-                <td className="py-2 px-4 border-b">
-                  {(folder.totalSize / 1024 / 1024).toFixed(2)} MB
-                </td>
-                <td className="py-2 px-4 border-b">
-                  {new Date(folder.lastModified).toLocaleDateString()}
-                </td>
-                <td className="py-2 px-4 border-b">
-                  {folder.hasLogFiles ? 'Yes' : 'No'}
-                </td>
-                <td className="py-2 px-4 border-b">
-                  {folder.cluster}
-                </td>
-                <td className="py-2 px-4 border-b text-xs max-w-xs overflow-x-auto">
-                  <ul className="list-disc list-inside space-y-1">
-                    {folder.sampleFiles.map((file, i) => (
-                      <li key={i}>{file}</li>
-                    ))}
-                  </ul>
-                </td>
-              </tr>
-            ))}
+            {paginatedFolders.map((folder, idx) => {
+              const isOpen = folder.code === openFolderCode;
+
+              return (
+                <React.Fragment key={idx}>
+                  <tr
+                    className="hover:bg-gray-50 text-sm cursor-pointer"
+                    onClick={() =>
+                      setOpenFolderCode(isOpen ? null : folder.code)
+                    }
+                  >
+                    <td className="py-2 px-4 border-b flex items-center gap-2 text-purple-700 font-medium">
+                      {isOpen ? <FaFolderOpen className="text-yellow-500" /> : <FaFolder className="text-yellow-500" />}
+                      {folder.code}
+                    </td>
+
+                    <td className="py-2 px-4 border-b">{folder.fileCount}</td>
+                    <td className="py-2 px-4 border-b">
+                      {(folder.totalSize / 1024 / 1024).toFixed(2)} MB
+                    </td>
+                    <td className="py-2 px-4 border-b">
+                      {new Date(folder.lastModified).toLocaleDateString()}
+                    </td>
+                    <td className="py-2 px-4 border-b">
+                      {folder.hasLogFiles ? 'Yes' : 'No'}
+                    </td>
+                    <td className="py-2 px-4 border-b">{folder.cluster}</td>
+                    <td className="py-2 px-4 border-b text-gray-400 italic">
+                      {isOpen ? 'Click to hide files' : 'Click to view files'}
+                    </td>
+                  </tr>
+
+                  {isOpen && folder.sampleFiles.length > 0 && (
+                    <tr className="bg-gray-50 text-sm">
+                      <td colSpan="7" className="py-2 px-4 border-b">
+                        <strong>Sample Files:</strong>
+                        <table className="w-full text-sm text-left text-purple-800 border mt-2">
+                          <thead className="bg-purple-100 text-purple-800">
+                            <tr>
+                              <th className="px-3 py-2 border">S.No.</th>
+                              <th className="px-3 py-2 border">File Name</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {folder.sampleFiles.map((file, index) => (
+                              <tr key={index} className="bg-white hover:bg-gray-50">
+                                <td className="px-3 py-2 border">{index + 1}</td>
+                                <td className="px-3 py-2 border">{file}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </td>
+
+                    </tr>
+                  )}
+                </React.Fragment>
+              );
+            })}
           </tbody>
+
         </table>
       </div>
 
@@ -153,9 +191,8 @@ const SpecificFolderLogs = () => {
           <button
             key={i}
             onClick={() => handlePageChange(i + 1)}
-            className={`px-3 py-1 border rounded text-sm ${
-              currentPage === i + 1 ? 'bg-purple-600 text-white' : 'bg-white'
-            }`}
+            className={`px-3 py-1 border rounded text-sm ${currentPage === i + 1 ? 'bg-purple-600 text-white' : 'bg-white'
+              }`}
           >
             {i + 1}
           </button>
